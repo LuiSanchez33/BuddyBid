@@ -4,7 +4,7 @@ const app = express();
 const Product = require('../models/product');
 
 //===========================
-//GET PRODUCT
+//GET ALL PRODUCTS
 //===========================
 
 app.get('/', (req, res) => {
@@ -19,6 +19,42 @@ app.get('/', (req, res) => {
             msg: 'Error loading product',
             errors: err
           });
+        }
+        res.status(200).json({
+          ok: true,
+          product: product
+        })
+      }
+    );
+
+});
+
+
+//===========================
+//GET PRODUCT
+//===========================
+
+app.get('/:id', (req, res) => {
+  const id = req.params.id;
+
+  Product.findById(id)
+    .populate('user', 'name email img')
+    .populate('category')
+    .exec(
+      (err, product) => {
+        if (err) {
+          return res.status(500).json({
+            ok: false,
+            msg: 'Error loading product',
+            errors: err
+          });
+        }
+        if (!product) {
+          return res.status(400).json({
+            ok: false,
+            message: 'product doesnt exits with this id' + id,
+            errors: { message: 'product doesnt exits with this id' + id }
+          })
         }
         res.status(200).json({
           ok: true,
@@ -95,8 +131,6 @@ app.put('/:id', (req, res) => {
     product.image = body.image;
     product.price = body.price;
     product.available = body.available;
-    product.user = body.user;
-    product.category = body.category;
 
     product.save((err, productSaved) => {
       if (err) {

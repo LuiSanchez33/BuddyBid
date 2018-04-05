@@ -7,7 +7,7 @@ const app = express();
 
 let Product = require('../models/product');
 let User = require('../models/user');
-
+let Category = require('../models/category');
 
 //default options
 app.use(fileUpload());
@@ -104,6 +104,35 @@ uploadForType = (type, id, nameFile, res) => {
     })
   }
 
+  if (type === 'categories') {
+    Category.findById(id, (err, category) => {
+      let pathOld = './uploads/categories/' + category.img;
+
+      //If exist, delete the previous img
+      if (fs.existsSync(pathOld)) {
+        fs.unlink(pathOld);
+      }
+
+      category.img = nameFile;
+      category.save((err, categoryUpdated) => {
+        if (err) {
+          return res.status(400).json({
+            ok: false,
+            message: 'error when updating user',
+            errors: err
+          });
+        }
+
+        return res.status(200).json({
+          ok: true,
+          message: 'Image of Category updated!',
+          category: categoryUpdated
+        });
+      })
+
+    })
+  }
+
   if (type === 'products') {
     Product.findById(id, (err, product) => {
       if (!product) {
@@ -132,7 +161,7 @@ uploadForType = (type, id, nameFile, res) => {
         return res.status(200).json({
           ok: true,
           message: 'Image of Product updated!',
-          user: productUpdated
+          product: productUpdated
         });
       })
 

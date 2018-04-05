@@ -3,6 +3,8 @@ var app = express();
 
 const fs = require('fs');
 
+
+
 app.get('/:type/:img', (req, res, next) => {
   let type = req.params.type;
   let img = req.params.img;

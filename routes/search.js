@@ -15,7 +15,7 @@ app.get('/collection/:source/:search', (req, res) => {
 
   switch (source) {
     case 'user':
-      console.log('entro aqui');
+
 
       promise = searchUser(search, regex);
       break;
@@ -80,13 +80,16 @@ let searchProduct = (search, regex) => {
 let searchCategory = (search, regex) => {
 
   return new Promise((resolve, reject) => {
-    Category.find({ name: regex }, (err, categories) => {
-      if (err) {
-        reject('Error loading users', err);
-      } else {
-        resolve(categories);
-      }
-    })
+    Category.find({ type: regex })
+      .populate('user', 'name email')
+      .exec(
+        (err, categories) => {
+          if (err) {
+            reject('Error loading users', err);
+          } else {
+            resolve(categories);
+          }
+        })
   })
 
 }

@@ -31,6 +31,41 @@ app.get('/', (req, res, next) => {
     );
 });
 
+
+//===========================
+//GET USER
+//===========================
+
+app.get('/:id', (req, res) => {
+  const id = req.params.id;
+
+
+  User.findById(id)
+    .exec((err, user) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          message: 'Error in searching user',
+          errors: err
+        });
+      }
+
+      if (!user) {
+        return res.status(400).json({
+          ok: false,
+          message: 'user doesnt exit with this id' + id,
+          errors: { message: 'user doesnt exit with this id' + id }
+        });
+      }
+
+      res.status(200).json({
+        ok: true,
+        user: user
+      });
+
+    });
+});
+
 //===========================
 //CREATE NEW USER
 //===========================

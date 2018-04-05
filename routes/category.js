@@ -29,6 +29,43 @@ app.get('/', (req, res) => {
 });
 
 //===========================
+//GET CATEGORY
+//===========================
+
+
+app.get('/:id', (req, res) => {
+  const id = req.params.id;
+
+
+  Category.findById(id)
+    .populate('user', 'name img email')
+    .exec((err, category) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          message: 'Error in searching user',
+          errors: err
+        });
+      }
+
+      if (!category) {
+        return res.status(400).json({
+          ok: false,
+          message: 'Category doesnt exits with this id' + id,
+          errors: { message: 'Category doesnt exits with this id' + id }
+        });
+      }
+
+      res.status(200).json({
+        ok: true,
+        category: category
+      });
+
+    });
+});
+
+
+//===========================
 //CREATE NEW CATEGORY
 //===========================
 
