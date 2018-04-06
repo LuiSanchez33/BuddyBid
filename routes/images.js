@@ -9,16 +9,21 @@ app.get('/:type/:img', (req, res, next) => {
   let type = req.params.type;
   let img = req.params.img;
 
-  let path = `./uploads/${type}/${img}`;
+  try {
 
-  fs.exists(path, exist => {
-    if (!exist) {
-      path = './assets/no-image.jpg';
-    }
+    let path = `./uploads/${type}/${img}`;
 
-    res.sendfile(path);
-  });
+    fs.exists(path, exist => {
+      if (!exist) {
+        path = './assets/no-image.jpg';
+      }
 
+      res.sendfile(path);
+    });
+  }
+  catch (e) {
+    res.send(e);
+  }
 
 });
 
